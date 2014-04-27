@@ -24,7 +24,7 @@ function Lib:OnLoad()
 	Queue = Apollo.GetPackage("Drafto:Lib:Queue-1.2").tPackage
 	local XmlDocument = Apollo.GetPackage("Drafto:Lib:XmlDocument-1.0").tPackage
 	glog = glog or Apollo.GetPackage("Gemini:Logging-1.2").tPackage:GetLogger({
-		level = GeminiLogging.tPackage.FATAL,
+		level = Apollo.GetPackage("Gemini:Logging-1.2").tPackage.FATAL,
 		pattern = "%d %n %c %l - %m",
 		appender = "GeminiConsole"
 	})
