@@ -6,7 +6,7 @@ end
 local Lib = APkg and APkg.tPackage or {}
 
 local Queue
-local glog
+local glog = nil
 
 local UPDATE_INTERVAL = 0.4			-- In seconds
 local TOKEN = "GeminiIO"
@@ -23,16 +23,11 @@ end
 function Lib:OnLoad()
 	Queue = Apollo.GetPackage("Drafto:Lib:Queue-1.2").tPackage
 	local XmlDocument = Apollo.GetPackage("Drafto:Lib:XmlDocument-1.0").tPackage
-	local GeminiLogging = Apollo.GetPackage("Gemini:Logging-1.2")
-	if not GeminiLogging.strLoadError or GeminiLogging.strLoadError == "" then
-		glog = GeminiLogging.tPackage:GetLogger({
-			level = GeminiLogging.tPackage.FATAL,
-			pattern = "%d %n %c %l - %m",
-			appender = "GeminiConsole"
-		})
-	else
-		glog = { info = function() end }
-	end
+	glog = glog or Apollo.GetPackage("Gemini:Logging-1.2").tPackage:GetLogger({
+		level = GeminiLogging.tPackage.FATAL,
+		pattern = "%d %n %c %l - %m",
+		appender = "GeminiConsole"
+	})
 
 	self.messageQueue = Queue.new()
 	
@@ -82,7 +77,10 @@ end
 
 function Lib:OnDependencyError(strDep, strError)
 	-- No Logging is not ideal, but not fatal
-	if strDep == "Gemini:Logging-1.2" then return true end
+	if strDep == "Gemini:Logging-1.2" then
+		glog = { info = function() end }
+		return true
+	end
 	Print("GeminiIO couldn't load " .. strDep .. ". Fatal error: " .. strError)
 	return false
 end
